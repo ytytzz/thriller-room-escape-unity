@@ -3,77 +3,57 @@ using UnityEngine.AI;
 
 public class WanderAI : MonoBehaviour
 {
-    public float wanderRadius = 20f;
-
-    // 움직이는 시간 / 멈춰 있는 시간 범위
-    public Vector2 moveTimeRange = new Vector2(2f, 5f);
-    public Vector2 pauseTimeRange = new Vector2(1f, 3f);
+    // 👉 체크포인트(웨이포인트)들
+    public Transform[] waypoints;
+    public float waypointTolerance = 0.5f;   // 목적지 도착 판정 오차
 
     NavMeshAgent agent;
     Animator animator;
 
-    float timer;
-    float currentInterval;
-    bool isPaused = false;
+    int currentWaypointIndex = 0;
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
 
-        // 처음에는 움직이도록 세팅
-        isPaused = false;
-        currentInterval = Random.Range(moveTimeRange.x, moveTimeRange.y);
+        if (waypoints == null || waypoints.Length == 0)
+        {
+            Debug.LogWarning("WanderAI: Waypoints가 비어 있습니다.", this);
+            enabled = false;
+            return;
+        }
+
+        agent.isStopped = false;
         SetNewDestination();
     }
 
     void Update()
     {
-        // 속도에 따라 Idle / Walk 전환
+        // 애니메이션 (Idle / Walk 전환)
         if (animator != null)
         {
             float speed = agent.velocity.magnitude;
-            animator.SetBool("isWalking", !isPaused && speed > 0.1f);
+            animator.SetBool("isWalking", speed > 0.1f);
         }
 
-        timer += Time.deltaTime;
-
-        // 일정 시간이 지나면 "움직이기 <-> 멈추기" 전환
-        if (timer >= currentInterval)
+        // 목적지에 거의 도착하면 다음 웨이포인트로
+        if (!agent.pathPending &&
+            agent.remainingDistance <= agent.stoppingDistance + waypointTolerance)
         {
-            timer = 0f;
-            isPaused = !isPaused;
-
-            if (isPaused)
-            {
-                // 멈추기
-                agent.isStopped = true;
-                currentInterval = Random.Range(pauseTimeRange.x, pauseTimeRange.y);
-            }
-            else
-            {
-                // 다시 움직이기
-                agent.isStopped = false;
-                currentInterval = Random.Range(moveTimeRange.x, moveTimeRange.y);
-                SetNewDestination();
-            }
+            GoToNextWaypoint();
         }
     }
 
     void SetNewDestination()
     {
-        Vector3 newPos = RandomNavSphere(transform.position, wanderRadius, -1);
-        agent.SetDestination(newPos);
+        Vector3 targetPos = waypoints[currentWaypointIndex].position;
+        agent.SetDestination(targetPos);
     }
 
-    public static Vector3 RandomNavSphere(Vector3 origin, float dist, int layerMask)
+    void GoToNextWaypoint()
     {
-        Vector3 randomDirection = Random.insideUnitSphere * dist;
-        randomDirection += origin;
-
-        NavMeshHit navHit;
-        NavMesh.SamplePosition(randomDirection, out navHit, dist, layerMask);
-
-        return navHit.position;
+        currentWaypointIndex = (currentWaypointIndex + 1) % waypoints.Length;
+        SetNewDestination();
     }
 }
