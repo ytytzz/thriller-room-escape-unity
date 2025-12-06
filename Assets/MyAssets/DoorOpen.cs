@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections; 
 
 public class DoorOpen : MonoBehaviour
 {
@@ -10,10 +11,15 @@ public class DoorOpen : MonoBehaviour
     private Quaternion startRot;
     private Quaternion endRot;
     
+    public static ArrayList lines = new ArrayList();
+
 
 
     void Start()
     {
+        lines.Add("주변을 잘 둘러보고 힌트를 얻어보자..");
+        lines.Add("이제 키다리 아저씨를 피해서 집을 돌아다니며 키를 찾아보자..");
+        lines.Add("이제 집에 갈 수 있다...");
         if (doorMesh == null) doorMesh = transform;
 
         startRot = doorMesh.localRotation;
@@ -23,8 +29,9 @@ public class DoorOpen : MonoBehaviour
     public void OpenDoor()
     {
         isOpened = true;
-        
-        SubtitleUI.Instance.ShowLines(new string[] { "주변을 잘 둘러보고 힌트를 얻어보자!" }, 3f, 0.2f);
+        string firstLine = (string)lines[0]; // ArrayList는 object 타입이므로 캐스팅 필요
+        SubtitleUI.Instance.ShowLines(new string[] { firstLine }, 3f, 0.2f);
+        lines.RemoveAt(0);
     }
 
     void Update()
