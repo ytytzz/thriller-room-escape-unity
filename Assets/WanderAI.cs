@@ -56,4 +56,17 @@ public class WanderAI : MonoBehaviour
         currentWaypointIndex = (currentWaypointIndex + 1) % waypoints.Length;
         SetNewDestination();
     }
+
+    // 🔥 추가된 부분: 플레이어 충돌 시 스폰 위치로 되돌리기
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            PlayerController player = other.GetComponent<PlayerController>();
+            if (player != null)
+            {
+                player.Respawn();
+            }
+        }
+    }
 }
