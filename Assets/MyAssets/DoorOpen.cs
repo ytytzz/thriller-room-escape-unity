@@ -11,15 +11,18 @@ public class DoorOpen : MonoBehaviour
     private Quaternion startRot;
     private Quaternion endRot;
     
-    public static ArrayList lines = new ArrayList();
+    public static string[] arr = {
+        "주변을 잘 둘러보고 힌트를 얻어보자..",
+        "이제 키다리 아저씨를 피해서 집을 돌아다니며 키를 찾아보자..",
+        "이제 집에 갈 수 있다..."
+    };
+
+    public static ArrayList lines = new ArrayList(arr); // ← 이렇게 배열로 바로 초기화
 
 
 
     void Start()
     {
-        lines.Add("주변을 잘 둘러보고 힌트를 얻어보자..");
-        lines.Add("이제 키다리 아저씨를 피해서 집을 돌아다니며 키를 찾아보자..");
-        lines.Add("이제 집에 갈 수 있다...");
         if (doorMesh == null) doorMesh = transform;
 
         startRot = doorMesh.localRotation;

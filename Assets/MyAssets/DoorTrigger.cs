@@ -12,6 +12,7 @@ public class DoorTrigger : MonoBehaviour
 
             Debug.Log("OpenDoor 호출됨");
             door.OpenDoor();
+            Destroy(other.gameObject);
         }
     }
 }
