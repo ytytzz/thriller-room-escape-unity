@@ -9,6 +9,8 @@ public class DoorOpen : MonoBehaviour
     private bool isOpened = false;
     private Quaternion startRot;
     private Quaternion endRot;
+    
+
 
     void Start()
     {
@@ -21,6 +23,8 @@ public class DoorOpen : MonoBehaviour
     public void OpenDoor()
     {
         isOpened = true;
+        
+        SubtitleUI.Instance.ShowLines(new string[] { "주변을 잘 둘러보고 힌트를 얻어보자!" }, 3f, 0.2f);
     }
 
     void Update()
