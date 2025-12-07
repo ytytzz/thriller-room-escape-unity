@@ -12,7 +12,7 @@ public class DoorOpen : MonoBehaviour
     private Quaternion endRot;
     
     public static string[] arr = {
-        "주변을 잘 둘러보고 힌트를 얻어보자..",
+        "주변을 잘 둘러보자..",
         "이제 키다리 아저씨를 피해서 집을 돌아다니며 키를 찾아보자..",
         "이제 집에 갈 수 있다..."
     };
